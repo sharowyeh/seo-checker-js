@@ -2,6 +2,8 @@
 
 **Check given HTML with rules commit the expect on NodeJS**
 
+[![CircleCI](https://circleci.com/gh/sharowyeh/seo-checker-js.svg?style=svg)](https://circleci.com/gh/sharowyeh/seo-checker-js)
+
 ## Installation ##
 
 `npm install seo-checker-js`
@@ -26,6 +28,7 @@ const fs = require('fs');
 const https = require('https');
 const checker = require('seo-checker-js');
 const helper = checker.helper;
+
 // merge all default rules
 var default_rules = helper.mergeRules(
   helper.default_rule_1,
@@ -34,6 +37,7 @@ var default_rules = helper.mergeRules(
   helper.default_rule_4,
   helper.default_rule_5
 );
+
 // get webpage content as readable stream
 https.get('https://cloud.google.com/', (rs) => {
   // prepare writable stream for output file
@@ -54,7 +58,7 @@ The pacakge supports 5 default rules in helper.default_rule_*N*
 }
 ```
 - `selector` is nearly identical but subset of jquery selector for DOM elements, includes `tag`, `tag child`, `[attribute]`, `[attribute="value"]`, `:not`, `:has`, `:gt`, `:eq` and `:lt`
-- `description` description of selector, also the output string if actual value is not expected after checking
+- `description` description of selector, also the output string if actual value is not expected
 - `expect` value of selector result which rule expected, can be number for results count or boolean for result exist
 
 The rules can be customized and combined on demand
@@ -89,3 +93,5 @@ var rule_ab = helper.mergeRules(rule_a, rule_b);
 
 var rule_abc = helper.mergeRules(rule_ab, rule_c);
 ```
+
+And after typing lots of rule's usage... it should be had a class to do something more efficiency
