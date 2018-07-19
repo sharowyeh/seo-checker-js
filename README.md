@@ -58,7 +58,7 @@ The pacakge supports 5 default rules in this pacakge:
 
 Rule also can be customized, for example:
 
-We want to shows html has more than 5 `<strong>` tags, and have another rule to check if html has `<meta name="robots">`
+We want to show if html has more than 5 `<strong>` tags, and have another rule checking `<meta name="robots">` exists
 ```js
 const checker = require('seo-checker-js');
 
@@ -78,13 +78,13 @@ checker.check('input.html', rules, 'output.log');
 
 - `.without()` number of elements without given attribute, shows result if not expected
 
-- `.included()` element should be has given element, shows message if not expected
+- `.included()` element should have given element, shows message if not expected
 
 - `.excluded()` element shouldn't contain given element, shows message if not expected
 
-- `.greater()` element shouldn't had more than given number, shows message if not expected
+- `.greater()` number of elements shouldn't be greater than given number, shows message if not expected
 
-Rule supprted methods all have JSDoc for reference
+Rule supported methods all have JSDoc for reference
 
 
 ## Output ##
