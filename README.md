@@ -17,7 +17,7 @@ checker.check('file.html', checker.rule_img_without_alt, console);
 ```
 
 - The first parameter can be file path or [Readable stream](https://nodejs.org/api/stream.html#stream_readable_streams)
-- The second parameter is object (or array of objects) with `selector`, `expect` and `description` properties, refer to [Rule section](https://github.com/sharowyeh/seo-checker-js#rule)
+- The second parameter is object (or array of objects) of [Rule](https://github.com/sharowyeh/seo-checker-js#rule)
 - The last parameter can be file path, [Writable stream](https://nodejs.org/api/stream.html#stream_readable_streams) or console
 
 For example:
@@ -62,8 +62,9 @@ We want to shows html has more than 5 `<strong>` tags, and have another rule to 
 ```js
 const checker = require('seo-checker-js');
 
-// just change the number to 5
-let rule_custom1 = checker.rule_strong_gt_15;
+// just clone from default rule for strong tag
+let rule_custom1 = checker.rule_strong_gt_15.clone();
+// assign new counting number 
 rule_custom1.greater(5);
 // create a new rule check if html has <meta name="robots">
 let rule_custom2 = new checker.Rule('html').included('meta', 'name', 'robots');

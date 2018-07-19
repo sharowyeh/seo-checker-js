@@ -1,5 +1,9 @@
 'use struct'
 
+const _ = {
+  clone: require('lodash/clone')
+};
+
 class Rule {
   /**
    * Given element will be checked with rule functions,
@@ -32,10 +36,18 @@ class Rule {
     return `${tag}${(attr)?`[${attr}${(value)?`="${value}"`:``}]`:``}`;
   }
 
-  _default(){
+  _default() {
     this.selector = this._left;
     this.expect = true;
     this.failed = `HTML does not have ${this._left}`;
+  }
+
+  /**
+   * Clone rule
+   * @returns {Rule} new instance of this rule
+   */
+  clone() {
+    return _.clone(this);
   }
 
   /**

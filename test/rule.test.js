@@ -17,6 +17,17 @@ describe('rule implementation', () => {
     done();
   });
 
+  it('clone method', (done) => {
+    var rule_custom = rule_tag.clone();
+    rule_custom.greater(1);
+    should.equal(rule_custom.selector, 'head:gt(1)');
+    should.equal(rule_tag.selector, 'head');
+    var rule_ref = rule_custom;
+    rule_ref.greater(4);
+    should.equal(rule_custom.selector, 'head:gt(4)');
+    done();
+  });
+
   it('with method', (done) => {
     rule_tag.with('meta');
     // right side is tag should have >

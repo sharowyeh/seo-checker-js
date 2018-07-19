@@ -3,14 +3,14 @@ const checker = require('../src/checker');
 let rule1 = checker.rule_img_without_alt;
 console.log(rule1.selector, rule1.failed, rule1.expect);
 
-let rule4 = checker.rule_strong_gt_15;
+let rule4 = checker.rule_strong_gt_15.clone();
 console.log(rule4.selector, rule4.failed, rule4.expect);
+rule4.greater(5);
 
 console.log('---')
-checker.check('./test/test-fail.html', rule4, console);
+checker.check('./test/test-fail.html', checker.rule_strong_gt_15, console);
 
 let rule3 = checker.rule_head_has_title_and_meta;
-console.log(rule3);
 
 let rules = checker.mergeRules(rule1, rule3, rule4);
 rules.forEach((rule) => {
