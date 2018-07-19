@@ -3,12 +3,49 @@
 const fs = require('fs');
 const stream = require('stream');
 const Parser = require('./parser');
-const helper = require('./helper');
+const Rule = require('./rule');
+
+/** <img> without alt attribute */
+const rule_img_without_alt = new Rule('img').without('alt');
+/** <a> without rel attribute */
+const rule_a_without_rel = new Rule('a').without('rel');
+/**
+ * Array of rules:
+ *   - <head> has <title>
+ *   - <head> has <meta name="descriptions"/>
+ *   - <head> has <meta name="keywords"/>
+ */
+const rule_head_has_title_and_meta = [
+  new Rule('head').included('title'),
+  new Rule('head').included('meta', 'name', 'descriptions'),
+  new Rule('head').included('meta', 'name', 'keywords')
+];
+/** <strong> more than 15 */
+const rule_strong_gt_15 = new Rule('strong').greater(15);
+/** <h1> more than 1 */
+const rule_h1_gt_1 = new Rule('h1').greater(1);
+
+/**
+ * Merge multiple rule or array of rules
+ * @param {(Rule|Rule[])} rules a rule or an array of rules
+ * @returns {Rule[]} combined rules
+ */
+function mergeRules(...rules) {
+  let combined = [];
+  rules.forEach((rule) => {
+    if (Array.isArray(rule)) {
+      combined = combined.concat(rule);
+    } else {
+      combined.push(rule);
+    }
+  });
+  return combined;
+}
 
 /**
  * Load html from file
  * @param {string} path html file path
- * @param {object} rules a rule or list of rules with selector
+ * @param {(Rule|Rule[])} rules a rule or list of rules with selector
  * @param {?object} options read file options
  * @returns {Promise<Parser>} parser of html tags commit given rules
  */
@@ -37,7 +74,7 @@ function loadFile(path, rules, options={ encoding: 'utf8'}) {
 /**
  * Load html from readable stream
  * @param {stream.Readable} rstream readable stream
- * @param {object} rules a rule or list of rules with selector
+ * @param {(Rule|Rule[])} rules a rule or list of rules with selector
  * @param {?string} encoding specific read encoding, default is utf8
  * @returns {Promise<Parser>} parser of html tags commit given rules
  */
@@ -69,10 +106,17 @@ function loadStream(rstream, rules, encoding='utf8') {
  * @param {string} path output file path
  * @param {string} content output string
  * @param {?object} options write file options
+ * @returns {Promise<void>}
  */
 function writeFile(path, content, options={ encoding: 'utf8'}) {
-  fs.writeFile(path, content, options, (err) => {
-    if (err) console.log(err);
+  return new Promise((resolve, reject) => {
+    fs.writeFile(path, content, options, (err) => {
+      if (!err) {
+        resolve();
+      } else {
+        reject(err);
+      }
+    });  
   });
 }
 
@@ -125,23 +169,27 @@ function writeConsole(cons, content) {
 function buildOutput(results) {
   let output = '';
   results.forEach((value, key, map) => {
-    let description = value.description;
+    //let description = value.description;
+    let failed = value.failed;
     let tags = value.tags;
     let expect = value.expect;
     let actual = null;
-    let pre = null;
+    let output_actual = '';
+    //let pre = null;
     if (typeof expect === 'number') {
       actual = tags.length;
-      pre = 'count';
+      output_actual = `${actual}`;
+    //  pre = 'count';
     } else if (typeof expect === 'boolean') {
       actual = (tags.length > 0);
-      pre = 'is';
+    //  pre = 'is';
     } else {
       console.log(`Unexpect expect=${expect}`);
       return '';
     }
     if (expect != actual) {
-      output += `${description} ${pre} ${actual}\n`;
+      output += `${failed}${output_actual}\n`;
+      //output += `${description} ${pre} ${actual}\n`;
     }
   });
   return output;
@@ -189,7 +237,13 @@ function check(source, rules, target) {
 }
 
 module.exports = {
-  helper,
+  Rule,
+  rule_img_without_alt,
+  rule_a_without_rel,
+  rule_head_has_title_and_meta,
+  rule_strong_gt_15,
+  rule_h1_gt_1,
+  mergeRules,
   loadFile,
   loadStream,
   writeFile,

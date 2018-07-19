@@ -4,6 +4,7 @@ const cheerio = require('cheerio');
 const _ = {
   defaults: require('lodash/defaults')
 };
+const Rule = require('./rule');
 
 /**
  * Parser class implemented methods getting results of SEO tags from query operation.
@@ -19,7 +20,7 @@ class Parser {
    * Given html string and rules with selectors
    * for getting results of SEO tags from query operation.
    * @param {string} data html string
-   * @param {object} rules a rule or list of rules with selector
+   * @param {(Rule|Rule[])} rules a rule or list of rules with selector
    * @param {object} options dict of cheerio load options, default is {}
    */
   constructor(data, rules, options = {}) {
@@ -60,9 +61,6 @@ class Parser {
 
   /**
    * Less then given index of selected tags
-   * TODO: lt(less than) operation needs definition of 'true' is 
-   *       -> (current) has/gets tags which index less than the given index, or
-   *       -> the tags count is less than the given number
    * @param {string} selector selector string for cheerio call
    * @param {number} idx zero based index of selected tags
    * @returns {object} DOM elements of tags which thier index less than given index
@@ -128,7 +126,8 @@ class Parser {
       return this._results.values().next().value.tags;
     }
     if (!(this._results.has(selector))) {
-      throw new Error(`Given selector=${selector} does not exist in results`);
+      console.log(`Given selector=${selector} does not exist in results`);
+      return null;
     }
     return this._results.get(selector).tags;
   }
@@ -139,7 +138,7 @@ class Parser {
    * @returns {number} tags count
    */
   getCount(selector = null) {
-    let tags = this.getTags(selector).tags;
+    let tags = this.getTags(selector);
     return tags ? tags.length : -1;
   }
 
